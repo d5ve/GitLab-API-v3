@@ -2713,7 +2713,7 @@ sub search_projects_by_name {
     return $self->get( $path, ( defined($params) ? $params : () ) );
 }
 
-=head1 SNIPPET METHODS
+=head1 PROJECT SNIPPET METHODS
 
 See L<http://doc.gitlab.com/ce/api/project_snippets.html>.
 
@@ -3423,6 +3423,125 @@ sub compound_metrics {
     my $self = shift;
     croak "The compound_metrics method does not take any arguments" if @_;
     my $path = sprintf('/sidekiq/compound_metrics', (map { uri_escape($_) } @_));
+    $log->infof( 'Making %s request against %s.', 'GET', $path );
+    return $self->get( $path );
+}
+
+=head1 PERSONAL SNIPPET METHODS
+
+See L<http://docs.gitlab.com/ce/api/snippets.html>.
+
+=head2 personal_snippets
+
+    my $snippets = $api->personal_snippets();
+
+Sends a C<GET> request to C</snippets> and returns the decoded/deserialized response body.
+
+=cut
+
+sub personal_snippets {
+    my $self = shift;
+    croak "The personal_snippets method does not take any arguments" if @_;
+    my $path = sprintf('/snippets', (map { uri_escape($_) } @_));
+    $log->infof( 'Making %s request against %s.', 'GET', $path );
+    return $self->get( $path );
+}
+
+=head2 personal_snippet
+
+    my $snippet = $api->personal_snippet(
+        $snippet_id,
+    );
+
+Sends a C<GET> request to C</snippets/:snippet_id> and returns the decoded/deserialized response body.
+
+=cut
+
+sub personal_snippet {
+    my $self = shift;
+    croak 'personal_snippet must be called with 1 arguments' if @_ != 1;
+    croak 'The #1 argument ($snippet_id) to personal_snippet must be a scalar' if ref($_[0]) or (!defined $_[0]);
+    my $path = sprintf('/snippets/%s', (map { uri_escape($_) } @_));
+    $log->infof( 'Making %s request against %s.', 'GET', $path );
+    return $self->get( $path );
+}
+
+=head2 create_personal_snippet
+
+    $api->create_personal_snippet(
+        \%params,
+    );
+
+Sends a C<POST> request to C</snippets>.
+
+=cut
+
+sub create_personal_snippet {
+    my $self = shift;
+    croak 'create_personal_snippet must be called with 0 to 1 arguments' if @_ < 0 or @_ > 1;
+    croak 'The last argument (\%params) to create_personal_snippet must be a hash ref' if defined($_[0]) and ref($_[0]) ne 'HASH';
+    my $params = (@_ == 1) ? pop() : undef;
+    my $path = sprintf('/snippets', (map { uri_escape($_) } @_));
+    $log->infof( 'Making %s request against %s.', 'POST', $path );
+    $self->post( $path, ( defined($params) ? $params : () ) );
+    return;
+}
+
+=head2 edit_personal_snippet
+
+    $api->edit_personal_snippet(
+        $snippet_id,
+        \%params,
+    );
+
+Sends a C<PUT> request to C</snippets/:snippet_id>.
+
+=cut
+
+sub edit_personal_snippet {
+    my $self = shift;
+    croak 'edit_personal_snippet must be called with 1 to 2 arguments' if @_ < 1 or @_ > 2;
+    croak 'The #1 argument ($snippet_id) to edit_personal_snippet must be a scalar' if ref($_[0]) or (!defined $_[0]);
+    croak 'The last argument (\%params) to edit_personal_snippet must be a hash ref' if defined($_[1]) and ref($_[1]) ne 'HASH';
+    my $params = (@_ == 2) ? pop() : undef;
+    my $path = sprintf('/snippets/%s', (map { uri_escape($_) } @_));
+    $log->infof( 'Making %s request against %s.', 'PUT', $path );
+    $self->put( $path, ( defined($params) ? $params : () ) );
+    return;
+}
+
+=head2 delete_personal_snippet
+
+    $api->delete_personal_snippet(
+        $snippet_id,
+    );
+
+Sends a C<DELETE> request to C</snippets/:snippet_id>.
+
+=cut
+
+sub delete_personal_snippet {
+    my $self = shift;
+    croak 'delete_personal_snippet must be called with 1 arguments' if @_ != 1;
+    croak 'The #1 argument ($snippet_id) to delete_personal_snippet must be a scalar' if ref($_[0]) or (!defined $_[0]);
+    my $path = sprintf('/snippets/%s', (map { uri_escape($_) } @_));
+    $log->infof( 'Making %s request against %s.', 'DELETE', $path );
+    $self->delete( $path );
+    return;
+}
+
+=head2 personal_public_snippet
+
+    my $snippets = $api->personal_public_snippet();
+
+Sends a C<GET> request to C</snippets/public> and returns the decoded/deserialized response body.
+
+=cut
+
+sub personal_public_snippet {
+    my $self = shift;
+    croak "The personal_public_snippet method does not take any arguments" if @_;
+    my $path = sprintf('/snippets/public', (map { uri_escape($_) } @_));
     $log->infof( 'Making %s request against %s.', 'GET', $path );
     return $self->get( $path );
 }
