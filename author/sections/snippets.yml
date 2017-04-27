@@ -1,0 +1,7 @@
+---
+- personal_snippets: snippets = GET /snippets
+- personal_snippet: snippet = GET /snippets/:snippet_id
+- create_personal_snippet: POST /snippets?
+- edit_personal_snippet: PUT /snippets/:snippet_id?
+- delete_personal_snippet: DELETE /snippets/:snippet_id
+- personal_public_snippet: snippets = GET /snippets/public
